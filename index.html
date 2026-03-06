@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sort Dash: Challenges</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #0f1117;
+    color: #e2e4ea;
+    min-height: 100vh;
+    padding: 40px 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 960px;
+    width: 100%;
+  }
+
+  .page-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -1px;
+    margin-bottom: 48px;
+  }
+
+  .page-title span {
+    color: #fff;
+    font-weight: 700;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: inherit;
+    font-weight: 700;
+    color: #4a4e63;
+    margin-right: 2px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: #6b7084;
+    margin-bottom: 32px;
+  }
+
+  .table-wrap {
+    background: #181a24;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #252836;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    text-align: left;
+    padding: 16px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #6b7084;
+    background: #1c1f2b;
+    border-bottom: 2px solid #252836;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  thead th:first-child { padding-left: 28px; }
+
+  tbody tr {
+    transition: background 0.15s ease;
+    cursor: default;
+  }
+
+  tbody tr:hover {
+    background: rgba(99, 132, 255, 0.06);
+  }
+
+  tbody tr:not(:last-child) td {
+    border-bottom: 1px solid #1f2230;
+  }
+
+  tbody td {
+    padding: 14px 20px;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+
+  tbody td:first-child {
+    padding-left: 28px;
+  }
+
+  .height-val {
+    display: inline-block;
+    padding: 2px 7px;
+    margin: 2px 3px 2px 0;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.04);
+    font-size: 12.5px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  tbody tr:hover .height-val {
+    background: rgba(99,132,255,0.1);
+    color: #c4c8db;
+  }
+
+  /* Count indicator */
+  .height-count {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 11px;
+    color: #4a4e63;
+    font-weight: 500;
+  }
+
+  /* Zebra striping - very subtle */
+  tbody tr:nth-child(even) {
+    background: rgba(255,255,255,0.015);
+  }
+  tbody tr:nth-child(even):hover {
+    background: rgba(99, 132, 255, 0.06);
+  }
+
+  /* Section spacing */
+  .section-spacer {
+    margin-top: 56px;
+  }
+
+  /* Preset index column */
+  .col-index {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 15px;
+    color: #fff;
+    width: 80px;
+  }
+
+  /* Preset name column */
+  .col-preset {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 15px;
+    color: #c4c8db;
+    width: 120px;
+  }
+
+  /* DeckCount badge */
+  .col-deckcount {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 15px;
+    width: 120px;
+  }
+
+  .dc-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  /* DeckCount color tiers */
+  .dc-low        { color: #f87171; }
+  .dc-low  .dc-badge { background: rgba(248,113,113,0.12); color: #f87171; }
+  .dc-mid-low    { color: #fb923c; }
+  .dc-mid-low .dc-badge { background: rgba(251,146,60,0.12); color: #fb923c; }
+  .dc-mid        { color: #fbbf24; }
+  .dc-mid  .dc-badge { background: rgba(251,191,36,0.12); color: #fbbf24; }
+  .dc-mid-high   { color: #34d399; }
+  .dc-mid-high .dc-badge { background: rgba(52,211,153,0.12); color: #34d399; }
+  .dc-high       { color: #60a5fa; }
+  .dc-high .dc-badge { background: rgba(96,165,250,0.12); color: #60a5fa; }
+  .dc-max        { color: #a78bfa; }
+  .dc-max  .dc-badge { background: rgba(167,139,250,0.12); color: #a78bfa; }
+
+  /* Valid heights column for presets */
+  .col-valid-heights {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #9498ad;
+    line-height: 1.7;
+  }
+
+  /* Formation grid cards */
+  .preset-grid-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 16px;
+  }
+
+  .preset-card {
+    background: #181a24;
+    border: 1px solid #252836;
+    border-radius: 14px;
+    padding: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .preset-card:hover {
+    border-color: #3a3f55;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .preset-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .preset-card-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .preset-card-idx {
+    color: #6b7084;
+    font-weight: 400;
+    font-size: 12px;
+    margin-right: 4px;
+  }
+
+  .formation-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+  }
+
+  .formation-grid .cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    transition: transform 0.1s;
+  }
+
+  .formation-grid .cell-on {
+    background: rgba(45, 106, 79, 0.75);
+    border: 1px solid rgba(52, 211, 153, 0.2);
+  }
+
+  .formation-grid .cell-off {
+    background: #14161e;
+    border: 1px solid #1c1f2b;
+  }
+
+  .preset-card:hover .cell-on {
+    background: rgba(52, 211, 153, 0.45);
+  }
+
+  /* Level cards */
+  .level-grid-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .level-card {
+    background: #181a24;
+    border: 1px solid #252836;
+    border-radius: 14px;
+    padding: 18px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .level-card:hover {
+    border-color: #3a3f55;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .level-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .level-card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 18px;
+    color: #fff;
+  }
+
+  .level-card-preset-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    color: #c4c8db;
+  }
+
+  .level-card-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+    margin-bottom: 14px;
+  }
+
+  .level-card-grid .cell {
+    aspect-ratio: 1;
+    border-radius: 3px;
+  }
+
+  .level-card-grid .cell-on {
+    background: rgba(45, 106, 79, 0.75);
+    border: 1px solid rgba(52, 211, 153, 0.2);
+  }
+
+  .level-card-grid .cell-off {
+    background: #14161e;
+    border: 1px solid #1c1f2b;
+  }
+
+  .level-card:hover .cell-on {
+    background: rgba(52, 211, 153, 0.45);
+  }
+
+  .level-card-stats {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    align-items: center;
+  }
+
+  .level-stat {
+    display: contents;
+  }
+
+  .level-stat-label {
+    color: #6b7084;
+    font-weight: 400;
+  }
+
+  .level-stat-value {
+    color: #e2e4ea;
+    font-weight: 600;
+  }
+
+  /* Collapsible sections */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .section-header h1 {
+    margin-bottom: 0;
+  }
+
+  .section-header:hover h1 {
+    color: #c4c8db;
+  }
+
+  .section-chevron {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #4a4e63;
+  }
+
+  .section-header:hover .section-chevron {
+    color: #6b7084;
+  }
+
+  .section.collapsed .section-chevron {
+    transform: rotate(-90deg);
+  }
+
+  .section-content {
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    max-height: 4000px;
+    opacity: 1;
+  }
+
+  .section.collapsed .section-content {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  .section .subtitle {
+    margin-top: 6px;
+  }
+
+  .levels-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #4a4e63;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .levels-status.success {
+    color: #34d399;
+  }
+
+  .levels-status.error {
+    color: #f87171;
+  }
+
+  .levels-status.loading {
+    color: #6b7084;
+  }
+
+  .levels-loading-spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #2a2d3a;
+    border-top-color: #6b7084;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 16px 8px; }
+    h1 { font-size: 22px; }
+    thead th, tbody td { padding: 10px 12px; font-size: 12px; }
+    .height-val { padding: 1px 4px; font-size: 11px; }
+    .col-index, .col-preset, .col-deckcount { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 class="page-title">Sort Dash<span>: Challenges</span></h1>
+
+  <div class="section" id="sec-levels">
+    <div class="section-header" onclick="toggleSection('sec-levels')">
+      <svg class="section-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+      <h1><span class="section-number">1.</span> Tower Challenge Levels</h1>
+    </div>
+    <div class="section-content">
+      <p class="subtitle">Remote config level breakdown with formation grid, deck count, and computed total card count</p>
+      <div id="levels-status" class="levels-status loading"><div class="levels-loading-spinner"></div> Syncing from Google Sheets...</div>
+      <div id="level-cards" class="level-grid-section"></div>
+    </div>
+  </div>
+
+  <div class="section section-spacer" id="sec-presets-grid">
+    <div class="section-header" onclick="toggleSection('sec-presets-grid')">
+      <svg class="section-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+      <h1><span class="section-number">2.</span> Formation Presets Preview</h1>
+    </div>
+    <div class="section-content">
+      <p class="subtitle">Visual layout of each 5x5 Tower formation preset — green = active cell, dark = inactive</p>
+      <div id="preset-cards" class="preset-grid-section"></div>
+    </div>
+  </div>
+
+  <div class="section section-spacer" id="sec-valid-heights">
+    <div class="section-header" onclick="toggleSection('sec-valid-heights')">
+      <svg class="section-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+      <h1><span class="section-number">3.</span> Valid Heights</h1>
+    </div>
+    <div class="section-content">
+      <p class="subtitle">DeckCount (active cells) and valid heights for each preset in FormationPresetConfig-Tower-5-Cols</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Index</th>
+              <th>Preset</th>
+              <th>Deck Count</th>
+              <th>Valid Heights ≤ 25</th>
+            </tr>
+          </thead>
+          <tbody id="tbody2"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const data = [
+  { d: 5,  step: 4,  heights: [4,8,12,16,20,24] },
+  { d: 6,  step: 10, heights: [10,20] },
+  { d: 7,  step: 20, heights: [20] },
+  { d: 8,  step: 5,  heights: [5,10,15,20,25] },
+  { d: 9,  step: 20, heights: [20] },
+  { d: 10, step: 2,  heights: [2,4,6,8,10,12,14,16,18,20,22,24] },
+  { d: 11, step: 20, heights: [20] },
+  { d: 12, step: 5,  heights: [5,10,15,20,25] },
+  { d: 13, step: 20, heights: [20] },
+  { d: 14, step: 10, heights: [10,20] },
+  { d: 15, step: 4,  heights: [4,8,12,16,20,24] },
+  { d: 16, step: 5,  heights: [5,10,15,20,25] },
+  { d: 17, step: 20, heights: [20] },
+  { d: 18, step: 10, heights: [10,20] },
+  { d: 19, step: 20, heights: [20] },
+  { d: 20, step: 1,  heights: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25] },
+  { d: 21, step: 20, heights: [20] },
+  { d: 22, step: 10, heights: [10,20] },
+  { d: 23, step: 20, heights: [20] },
+  { d: 24, step: 5,  heights: [5,10,15,20,25] },
+  { d: 25, step: 4,  heights: [4,8,12,16,20,24] },
+];
+
+const heightsLookup = {};
+data.forEach(row => { heightsLookup[row.d] = row.heights; });
+
+const presets = [
+  { idx: 0,  name: 'A', deckCount: 25, grid: [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1] },
+  { idx: 1,  name: 'B', deckCount: 9,  grid: [0,0,1,0,0, 0,0,1,0,0, 1,1,1,1,1, 0,0,1,0,0, 0,0,1,0,0] },
+  { idx: 2,  name: 'C', deckCount: 13, grid: [1,0,1,0,1, 0,0,1,0,0, 1,1,1,1,1, 0,0,1,0,0, 1,0,1,0,1] },
+  { idx: 3,  name: 'D', deckCount: 13, grid: [0,0,1,0,0, 0,1,1,1,0, 1,1,1,1,1, 0,1,1,1,0, 0,0,1,0,0] },
+  { idx: 4,  name: 'E', deckCount: 17, grid: [1,0,1,0,1, 0,1,1,1,0, 1,1,1,1,1, 0,1,1,1,0, 1,0,1,0,1] },
+  { idx: 5,  name: 'F', deckCount: 16, grid: [1,1,0,1,1, 1,1,0,1,1, 0,0,0,0,0, 1,1,0,1,1, 1,1,0,1,1] },
+  { idx: 6,  name: 'G', deckCount: 15, grid: [0,0,0,1,1, 0,1,1,1,1, 0,1,1,1,0, 1,1,1,1,0, 1,1,0,0,0] },
+  { idx: 7,  name: 'H', deckCount: 9,  grid: [0,0,0,0,0, 0,1,1,1,0, 0,1,1,1,0, 0,1,1,1,0, 0,0,0,0,0] },
+  { idx: 8,  name: 'I', deckCount: 9,  grid: [1,0,0,0,1, 0,1,0,1,0, 0,0,1,0,0, 0,1,0,1,0, 1,0,0,0,1] },
+  { idx: 9,  name: 'J', deckCount: 20, grid: [1,1,1,1,1, 1,1,0,1,1, 1,0,0,0,1, 1,1,0,1,1, 1,1,1,1,1] },
+  { idx: 10, name: 'K', deckCount: 16, grid: [0,1,0,1,0, 1,1,1,1,1, 0,1,0,1,0, 1,1,1,1,1, 0,1,0,1,0] },
+  { idx: 11, name: 'L', deckCount: 22, grid: [1,1,1,1,1, 1,1,1,1,1, 0,1,0,1,0, 1,1,1,1,1, 1,1,1,1,1] },
+];
+
+function dcTier(dc) {
+  if (dc <= 9)  return 'dc-low';
+  if (dc <= 13) return 'dc-mid-low';
+  if (dc <= 17) return 'dc-mid';
+  if (dc <= 19) return 'dc-mid-high';
+  if (dc <= 22) return 'dc-high';
+  return 'dc-max';
+}
+
+const tbody2 = document.getElementById('tbody2');
+
+presets.forEach(p => {
+  const tr = document.createElement('tr');
+  const tier = dcTier(p.deckCount);
+  const validHeights = heightsLookup[p.deckCount] || [];
+
+  const heightChips = validHeights.map(h =>
+    `<span class="height-val">${h}</span>`
+  ).join('');
+
+  const countLabel = validHeights.length > 2
+    ? `<span class="height-count">(${validHeights.length})</span>`
+    : '';
+
+  tr.innerHTML = `
+    <td class="col-index">${p.idx}</td>
+    <td class="col-preset">${p.name}</td>
+    <td class="col-deckcount ${tier}"><span class="dc-badge">${p.deckCount}</span></td>
+    <td class="col-valid-heights">${heightChips}${countLabel}</td>
+  `;
+  tbody2.appendChild(tr);
+});
+
+// --- Google Sheets Sync Config ---
+const SHEET_ID = '1JCKJ5Dne9DQKHM-NzR-iRs1DEvhthBt5lOmBTxKMWSQ';
+const SHEET_GID = '1082608877';
+const SHEET_JSONP_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleSheetData&gid=${SHEET_GID}`;
+
+const COLUMN_MAP = {
+  level: 'Level',
+  preset: 'FormationPresetIndex',
+  height: 'DeckHeight',
+  colors: 'ColorCount',
+};
+
+const FALLBACK_LEVELS = [
+  { level: 1,  preset: 7,  height: 10, colors: 5 },
+  { level: 2,  preset: 1,  height: 20, colors: 10 },
+  { level: 3,  preset: 2,  height: 20, colors: 10 },
+  { level: 4,  preset: 3,  height: 15, colors: 8 },
+  { level: 5,  preset: 4,  height: 15, colors: 8 },
+  { level: 6,  preset: 0,  height: 15, colors: 9 },
+  { level: 7,  preset: 5,  height: 15, colors: 8 },
+  { level: 8,  preset: 6,  height: 15, colors: 9 },
+  { level: 9,  preset: 0,  height: 15, colors: 8 },
+  { level: 10, preset: 8,  height: 15, colors: 9 },
+  { level: 11, preset: 9,  height: 15, colors: 8 },
+  { level: 12, preset: 10, height: 15, colors: 9 },
+  { level: 13, preset: 11, height: 15, colors: 8 },
+  { level: 14, preset: 1,  height: 15, colors: 9 },
+  { level: 15, preset: 2,  height: 15, colors: 8 },
+  { level: 16, preset: 3,  height: 15, colors: 9 },
+  { level: 17, preset: 4,  height: 15, colors: 8 },
+  { level: 18, preset: 5,  height: 15, colors: 9 },
+  { level: 19, preset: 6,  height: 15, colors: 8 },
+  { level: 20, preset: 0,  height: 15, colors: 9 },
+];
+
+// --- Tower Challenge Level Cards ---
+const COLLECTION_TARGET = 10;
+
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+function lcm(a, b) { return (a * b) / gcd(a, b); }
+
+function computeTotalCardCount(deckCount, towerHeight, colorCount) {
+  const T = COLLECTION_TARGET;
+  const D = deckCount;
+  const h = Math.max(towerHeight, 5);
+
+  const f1 = 5 / gcd(5, T);
+  const f2 = D / gcd(D, T);
+  const requiredMultiple = lcm(f1, f2);
+
+  const targetTotalCards = h * D;
+  const targetSetsByHeight = Math.ceil(targetTotalCards / T);
+  const minSets = Math.max(targetSetsByHeight, colorCount);
+
+  const remainder = minSets % requiredMultiple;
+  const adjustedTotalSets = remainder === 0 ? minSets : minSets + (requiredMultiple - remainder);
+
+  return adjustedTotalSets * T;
+}
+
+function parseGvizResponse(response) {
+  if (response.status !== 'ok') throw new Error(`Sheet returned status: ${response.status}`);
+
+  const table = response.table;
+  const headers = table.cols.map(c => c.label);
+  const colIdx = {};
+  for (const [key, header] of Object.entries(COLUMN_MAP)) {
+    colIdx[key] = headers.indexOf(header);
+    if (colIdx[key] === -1) throw new Error(`Column "${header}" not found`);
+  }
+
+  return table.rows
+    .map(row => ({
+      level:  parseInt(row.c[colIdx.level]?.v, 10),
+      preset: parseInt(row.c[colIdx.preset]?.v, 10),
+      height: parseInt(row.c[colIdx.height]?.v, 10),
+      colors: parseInt(row.c[colIdx.colors]?.v, 10),
+    }))
+    .filter(lv => !isNaN(lv.level))
+    .sort((a, b) => a.level - b.level);
+}
+
+const levelContainer = document.getElementById('level-cards');
+const statusEl = document.getElementById('levels-status');
+
+function setStatus(type, message) {
+  statusEl.className = 'levels-status ' + type;
+  statusEl.innerHTML = type === 'loading'
+    ? `<div class="levels-loading-spinner"></div> ${message}`
+    : message;
+}
+
+function renderLevels(levels) {
+  levelContainer.innerHTML = '';
+  levels.forEach(lv => {
+    const p = presets[lv.preset];
+    if (!p) return;
+    const dc = p.deckCount;
+    const tier = dcTier(dc);
+    const totalCards = computeTotalCardCount(dc, lv.height, lv.colors);
+
+    const cells = p.grid.map(v =>
+      `<div class="cell ${v ? 'cell-on' : 'cell-off'}"></div>`
+    ).join('');
+
+    const card = document.createElement('div');
+    card.className = 'level-card';
+    card.innerHTML = `
+      <div class="level-card-header">
+        <span class="level-card-title">Level ${lv.level}</span>
+        <span class="level-card-preset-tag"><span class="preset-card-idx">${lv.preset}</span> ${p.name}</span>
+      </div>
+      <div class="level-card-grid">${cells}</div>
+      <div class="level-card-stats">
+        <div class="level-stat"><span class="level-stat-label">Height</span><span class="level-stat-value">${lv.height}</span></div>
+        <div class="level-stat"><span class="level-stat-label">Colors</span><span class="level-stat-value">${lv.colors}</span></div>
+        <div class="level-stat"><span class="level-stat-label">Decks</span><span class="col-deckcount ${tier}"><span class="dc-badge">${dc}</span></span></div>
+        <div class="level-stat"><span class="level-stat-label">Total Cards</span><span class="level-stat-value">${totalCards}</span></div>
+      </div>
+    `;
+    levelContainer.appendChild(card);
+  });
+}
+
+// JSONP callback — called by the Google Sheets script tag
+function handleSheetData(response) {
+  try {
+    const levels = parseGvizResponse(response);
+    renderLevels(levels);
+    setStatus('success', `✓ Synced from Google Sheets · ${levels.length} levels`);
+  } catch (err) {
+    console.error('[Sheets sync]', err);
+    renderLevels(FALLBACK_LEVELS);
+    setStatus('error', `⚠ Parse error — showing cached data · ${err.message}`);
+  }
+}
+
+// Load data via JSONP (bypasses CORS from file://)
+const script = document.createElement('script');
+script.src = SHEET_JSONP_URL;
+script.onerror = function() {
+  console.error('[Sheets sync] Script load failed');
+  renderLevels(FALLBACK_LEVELS);
+  setStatus('error', `⚠ Offline — showing cached data`);
+};
+document.head.appendChild(script);
+
+// --- Formation Grid Cards ---
+const cardsContainer = document.getElementById('preset-cards');
+
+presets.forEach(p => {
+  const tier = dcTier(p.deckCount);
+  const cells = p.grid.map(v =>
+    `<div class="cell ${v ? 'cell-on' : 'cell-off'}"></div>`
+  ).join('');
+
+  const card = document.createElement('div');
+  card.className = 'preset-card';
+  card.innerHTML = `
+    <div class="preset-card-header">
+      <span class="preset-card-label"><span class="preset-card-idx">${p.idx}</span> ${p.name}</span>
+      <span class="col-deckcount ${tier}"><span class="dc-badge">${p.deckCount}</span></span>
+    </div>
+    <div class="formation-grid">${cells}</div>
+  `;
+  cardsContainer.appendChild(card);
+});
+
+// --- Collapsible Sections ---
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>
