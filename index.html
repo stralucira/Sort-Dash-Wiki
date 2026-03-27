@@ -107,7 +107,7 @@
   .badge.accent { border-color: var(--accent); color: var(--accent); }
 
   /* SECTION */
-  section { margin-bottom: 56px; }
+  section { margin-bottom: 56px; scroll-margin-top: 108px; }
   .section-title {
     font-size: 1.2rem; font-weight: 700; color: var(--text);
     margin-bottom: 20px; padding-bottom: 10px;
@@ -279,14 +279,14 @@
 <div class="page">
 
 <div class="hero">
-  <h1>Machina<span>Core</span> Framework</h1>
+  <h1>Machina<span>Core</span></h1>
   <p>Game-agnostic mobile game framework for Unity. Extracted from Sort Dash production codebase. Ready to use as a blank template for new games.</p>
   <div class="hero-badges">
-    <span class="badge accent">Assets/Scripts/Machina/</span>
-    <span class="badge">Unity 2022.3.62f1 LTS</span>
-    <span class="badge">iOS + Android</span>
-    <span class="badge">~280 framework classes</span>
-    <span class="badge">Zero Machina.Sortie refs</span>
+    <span class="badge accent">Hybrid-Casual Ready</span>
+    <span class="badge accent">Unity 2022.3.62f1 LTS</span>
+    <span class="badge accent">iOS + Android</span>
+    <span class="badge accent">~280 framework classes</span>
+    <span class="badge accent">LiveOps built-in</span>
   </div>
 </div>
 
@@ -721,8 +721,31 @@
   <div class="section-title"><span class="section-icon">🖼</span> UI System (Machina.UI)</div>
 
   <div class="callout">
-    <strong>UIController</strong> orchestrates all panels and popups. Use <code>content</code> GameObject for show/hide.
+    <strong>UIController</strong> orchestrates all panels and popups. Each <code>GameState</code> is coupled with a <code>UIPanel</code>.
+    When <code>GameStateChangedEvent</code> fires, UIController runs a <strong>segue</strong>: the outgoing panel plays its <strong>outro</strong> animation sequence,
+    then the incoming panel plays its <strong>intro</strong> animation sequence. Both intro and outro are optional per panel.
     All UI lives in <code>Assets/Scripts/Machina/_UI/</code>.
+  </div>
+
+  <div class="table-wrap" style="margin-bottom:16px">
+    <table class="class-table">
+      <thead><tr><th>GameState</th><th>UIPanel</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Loading</td><td class="mono">UIPanelLoading</td><td class="desc">Loading/transition screen</td></tr>
+        <tr><td class="mono">Lobby</td><td class="mono">UIPanelLobby</td><td class="desc">Main menu / lobby screen</td></tr>
+        <tr><td class="mono">Playing</td><td class="mono">UIPanelGame</td><td class="desc">In-game HUD and gameplay UI</td></tr>
+        <tr><td class="mono">Meta</td><td class="mono">UIPanelMeta</td><td class="desc">Meta-map overworld panel</td></tr>
+        <tr><td class="mono">Challenge</td><td class="mono">UIPanelChallenge</td><td class="desc">Challenge mode HUD</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="state-flow" style="margin-bottom:20px">
+    <div class="state-node">GameState changes</div>
+    <div class="state-arrow">→</div>
+    <div class="state-node end">Old panel outro</div>
+    <div class="state-arrow">→</div>
+    <div class="state-node start">New panel intro</div>
   </div>
 
   <div class="two-col">
