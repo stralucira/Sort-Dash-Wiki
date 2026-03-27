@@ -169,7 +169,7 @@
     background: var(--surface2); color: var(--text-dim); font-weight: 600; font-size: 11px;
     text-transform: uppercase; letter-spacing: 0.05em;
     border-bottom: 1px solid var(--border);
-    position: sticky; top: 100px; z-index: 10;
+    z-index: 10;
   }
   .class-table td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
   .class-table tr:last-child td { border-bottom: none; }
@@ -498,7 +498,7 @@
       </div>
       <div class="hier-body">
         <div class="hier-tree">
-          <div><span class="root">ScriptableObject</span></div>
+          <div><span class="root">MonoBehaviour</span></div>
           <div class="indent1">└ <span class="abstract">GameFeature</span></div>
           <div class="indent2">├ <span class="abstract">TimedGameFeature</span></div>
           <div class="indent3">├ <span class="concrete">MainLeagueEvent</span></div>
@@ -513,6 +513,52 @@
       </div>
     </div>
 
+  </div>
+</section>
+
+<!-- ═══════════════════════ GAME STATE MACHINE ═══════════════════════ -->
+<section>
+  <div class="section-title"><span class="section-icon">🎯</span> GameState Machine</div>
+  <div class="callout">
+    <strong>GameManager</strong> owns the top-level game state. Every transition: <code>SetState() → ValidateState() → HandleState() → GameStateChangedEvent.Invoke()</code>.
+    Cannot transition to the same state twice in a row. 15+ listeners react to changes (UIController, CameraController, MetaController, SoundManager, AdManager, etc.).
+  </div>
+  <div class="state-flow">
+    <div class="state-node start">None</div>
+    <div class="state-arrow">→</div>
+    <div class="state-node">Loading</div>
+    <div class="state-arrow">→</div>
+    <div class="state-node">Lobby</div>
+    <div class="state-arrow">→</div>
+    <div class="state-node">Playing</div>
+    <div class="state-arrow">→</div>
+    <div class="state-node end">Lobby</div>
+  </div>
+  <div class="state-flow" style="margin-top:8px">
+    <div class="state-node">Lobby</div>
+    <div class="state-arrow">⇌</div>
+    <div class="state-node special">Meta</div>
+    <span style="color:var(--text-muted); font-size:12px; margin: 0 8px">(overworld)</span>
+  </div>
+  <div class="state-flow" style="margin-top:8px">
+    <div class="state-node">Playing</div>
+    <div class="state-arrow">⇌</div>
+    <div class="state-node special">Challenge</div>
+    <span style="color:var(--text-muted); font-size:12px; margin: 0 8px">(special mode)</span>
+  </div>
+
+  <div style="margin-top:16px" class="table-wrap">
+    <table class="class-table">
+      <thead><tr><th>Transition</th><th>Trigger</th><th>Validation</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Loading → Lobby</td><td class="desc">Scene load complete</td><td class="desc">Always allowed</td></tr>
+        <tr><td class="mono">Lobby → Playing</td><td class="desc"><code>TryStartPlaying()</code> — spends a life via LifeManager</td><td class="desc">From Lobby, Meta, or Challenge</td></tr>
+        <tr><td class="mono">Playing → Lobby</td><td class="desc"><code>TryEndPlaying()</code> — restarts if below FirstLobbyLevel</td><td class="desc">Always allowed</td></tr>
+        <tr><td class="mono">Lobby → Meta</td><td class="desc"><code>TryStartBuilding()</code></td><td class="desc">Only from Lobby</td></tr>
+        <tr><td class="mono">Playing → Challenge</td><td class="desc"><code>StartChallenge()</code></td><td class="desc">Always allowed</td></tr>
+        <tr><td class="mono">Challenge → Playing</td><td class="desc"><code>EndChallenge()</code></td><td class="desc">Always allowed</td></tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
@@ -758,7 +804,7 @@
       <tbody>
         <tr>
           <td class="mono">GameFeature</td>
-          <td><span class="pill pill-abstract">abstract ScriptableObject</span></td>
+          <td><span class="pill pill-abstract">abstract MonoBehaviour</span></td>
           <td class="desc">Base for all features. Progress tracking, UI integration, <code>IsRunning</code>, <code>IsVisible</code>, <code>IsInteractable</code>. Override <code>GetFeatureKey()</code>, <code>GetUnnyId()</code>.</td>
         </tr>
         <tr>
