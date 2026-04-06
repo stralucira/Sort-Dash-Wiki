@@ -345,26 +345,20 @@ function backToSelector(){
 window.addEventListener('message',e=>{
   if(!e.data||!e.data.type)return;
   if(e.data.type==='ready'){
-    gameFrame.contentWindow.postMessage({type:'key',key:PW},'*');
-    return;
-  }
-  if(e.data.type==='enterGameplay'){
     siteNav.style.display='none';
     document.body.style.paddingTop='0';
-    backBtn.style.display='none';
     if(isMobile){
       const el=document.documentElement;
       if(el.requestFullscreen)el.requestFullscreen().catch(()=>{});
       else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();
     }
+    gameFrame.contentWindow.postMessage({type:'key',key:PW},'*');
+    return;
+  }
+  if(e.data.type==='enterGameplay'){
+    backBtn.style.display='none';
   }
   if(e.data.type==='exitGameplay'){
-    if(isMobile){
-      if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
-      else if(document.webkitFullscreenElement)document.webkitExitFullscreen();
-    }
-    siteNav.style.display='';
-    document.body.style.paddingTop='';
     backBtn.style.display='';
   }
 });
