@@ -1011,17 +1011,6 @@
   .agent-flow-box .flow-accent { color: var(--accent); font-weight: 600; }
   .agent-flow-box .flow-mute { color: var(--text-muted); }
   .agent-flow-box .flow-strong { color: var(--text); font-weight: 600; }
-
-  .agent-obs {
-    background: var(--surface); border: 1px solid var(--border);
-    border-left: 3px solid var(--accent5);
-    border-radius: 8px; padding: 14px 18px; margin-bottom: 12px;
-  }
-  .agent-obs h5 {
-    font-size: 13px; color: var(--accent5); margin-bottom: 6px;
-    font-weight: 600;
-  }
-  .agent-obs p { font-size: 12.5px; color: var(--text-dim); line-height: 1.55; }
 </style>
 
 <section id="agent-docs">
@@ -1123,24 +1112,42 @@
     </div>
   </div>
 
-  <h3 style="font-size: 14px; font-weight: 600; color: var(--text); margin: 0 0 16px; letter-spacing: -0.2px">Current state — observations worth flagging</h3>
+  <h3 style="font-size: 14px; font-weight: 600; color: var(--text); margin: 0 0 16px; letter-spacing: -0.2px">How the files link to each other</h3>
 
-  <div class="agent-obs">
-    <h5>CLAUDE.md and AGENTS.md are out of date</h5>
-    <p>They still describe "Sort Dash" as the active project with <code>Assets/Scripts/Game/</code> under the <code>Machina.Sortie</code> namespace. Line 187 reads <em>"New game logic goes in Assets/Scripts/Game/ under Machina.Sortie namespace"</em> — but that folder has been deleted (per AGENT_ONBOARDING.md §7, the Sort Dash deletion pass is complete). AGENT_ONBOARDING.md is the source of truth for current state; the overview docs have drifted.</p>
+  <div class="callout" style="margin-bottom: 20px">
+    Every file carries explicit pointers to the others, so no matter which one an agent reads first,
+    the rest are reachable in one hop.
   </div>
 
-  <div class="agent-obs">
-    <h5>They don't cross-reference each other</h5>
-    <p>CLAUDE.md and AGENTS.md contain no pointer to AGENT_ONBOARDING.md. An agent that only reads the auto-loaded CLAUDE.md never discovers the deep doc unless told. This is a mild footgun. A "Framework Guides" section was recently added to all three files to surface subsystem documentation (e.g. the power-ups implementation guide).</p>
+  <div class="table-wrap" style="margin-bottom: 28px">
+    <table class="class-table">
+      <thead><tr><th>From</th><th>Points to</th><th>Where</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="mono">CLAUDE.md</td>
+          <td class="desc"><code>AGENT_ONBOARDING.md</code>, <code>AGENTS.md</code>, <code>docs/index.html</code>, <code>docs/powerup-implementation-guide.md</code></td>
+          <td class="desc">Top-of-file "Deep reference" banner + "Further Reading" table</td>
+        </tr>
+        <tr>
+          <td class="mono">AGENTS.md</td>
+          <td class="desc"><code>AGENT_ONBOARDING.md</code>, <code>CLAUDE.md</code>, <code>docs/index.html</code>, <code>docs/powerup-implementation-guide.md</code></td>
+          <td class="desc">Same structure as CLAUDE.md (it's a mirror)</td>
+        </tr>
+        <tr>
+          <td class="mono">AGENT_ONBOARDING.md</td>
+          <td class="desc"><code>CLAUDE.md</code>, <code>AGENTS.md</code>, <code>docs/index.html</code>, <code>docs/powerup-implementation-guide.md</code></td>
+          <td class="desc">"Related documentation" table at the top</td>
+        </tr>
+        <tr>
+          <td class="mono">docs/&lt;feature&gt;-guide.md</td>
+          <td class="desc">Back to framework files via relative paths (e.g. <code>../Assets/Scripts/Machina/...</code>)</td>
+          <td class="desc">Inline links on every file-level reference</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <div class="agent-obs">
-    <h5><code>docs/</code> is the home for subsystem-specific guides</h5>
-    <p>AGENT_ONBOARDING.md is the "here's the whole framework" doc; <code>docs/powerup-implementation-guide.md</code> is the "here's how to use one subsystem" doc. Both CLAUDE.md and AGENTS.md now link to the power-ups guide from a "Framework Guides" section.</p>
-  </div>
-
-  <h3 style="font-size: 14px; font-weight: 600; color: var(--text); margin: 28px 0 16px; letter-spacing: -0.2px">The intended flow</h3>
+  <h3 style="font-size: 14px; font-weight: 600; color: var(--text); margin: 0 0 16px; letter-spacing: -0.2px">The intended flow</h3>
 
   <div class="agent-flow-box"><span class="flow-strong">Agent opens repo</span>
   <span class="flow-mute">│</span>
